@@ -17,10 +17,9 @@ public class CustomerDemo {
     String city() default "Vitebsk";
 }
 
-
+//Присоединить ко всем сотрудникам информацию о фирме
 @Company
 class Employee {
-
     private int id;
     private String name;
 
@@ -29,14 +28,13 @@ class Employee {
         this.name = name;
     }
 
-    public void getEmployeeDetails(){
+    public void getDetails(){
         System.out.println("Employee Id: " + id);
         System.out.println("Employee Name: " + name);
     }
 }
 
 class Manager extends Employee{
-
     public Manager(int id, String name) {
         super(id, name);
     }
@@ -46,7 +44,7 @@ class EmployeeProcessor{
     public static void process(){
         //Employee employee = new Employee(1, "John Doe");
         Employee employee = new Manager(1, "John Doe");
-        employee.getEmployeeDetails();
+        employee.getDetails();
 
         Annotation companyAnnotation = employee
                 .getClass()
@@ -83,11 +81,13 @@ class RepeatedAnnotatedEmployee extends Employee{
 class RepeatedAnnotatedEmployeeProcessor{
     public static void process(){
         Employee employee = new RepeatedAnnotatedEmployee(1, "John Doe");
-        employee.getEmployeeDetails();
-
+        employee.getDetails();
+/*
         Annotation companyAnnotation = employee
                 .getClass()
                 .getAnnotation(RepeatableCompany.class);
+
+ */
         RepeatableCompany[] repeatableCompanies = RepeatedAnnotatedEmployee.class
                 .getAnnotationsByType(RepeatableCompany.class);
         for (RepeatableCompany repeatableCompany : repeatableCompanies) {

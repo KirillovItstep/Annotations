@@ -96,7 +96,7 @@ class DoSomeThingProcess {
                 }
             }
         }else {
-            throw new RuntimeException("无法向下转型成指定类");
+            throw new RuntimeException("Runtime exception类");
         }
     }
 }

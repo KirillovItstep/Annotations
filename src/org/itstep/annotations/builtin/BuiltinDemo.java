@@ -1,6 +1,7 @@
 package org.itstep.annotations.builtin;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /*
@@ -12,9 +13,23 @@ rawtypes - отключение предупреждений, связанных
 null -  отключение предупреждений, связанных с анализом null
 super - отключение предупреждений, связанных с переопределением метода без вызова базового метода
 unchecked - отключение предупреждений, связанных с непроверенными операциями
-unchecked - отключение предупреждений, связанных с неиспользуемым кодом
+unused - отключение предупреждений, связанных с неиспользуемым кодом
 и т.д.
  */
+
+/*
+Здесь появились предупреждения Never used, never assigned, unchecked call of raw type
+Пробуйте их убрать
+ */
+
+class Machine{
+    private List versions;
+    @SuppressWarnings({"unchecked"})
+    public void addVersion(String version){
+        versions.add(version);
+    }
+}
+
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class BuiltinDemo {
     public static void main(String[] args) {
