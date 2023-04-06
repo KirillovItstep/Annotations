@@ -47,6 +47,11 @@ class Book{
     }
 }
 
+/*
+Retention - удержание; мета-аннотация, которая может быть применена к другим аннотациям
+Имеет 3 политики: SOURCE, CLASS, RUNTIME, которые показывают, когда аннотация применяется (и отбрасывается)
+Политику SOURCE имеют такие аннотации, как @SupressWarnings, @Override
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE) // Используется только для class, enum, interface
 @interface BookAnnotation{

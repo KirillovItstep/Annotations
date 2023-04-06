@@ -6,28 +6,31 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /*
+Рефлексия - "темная сторона" Java
+Рефлексия (от лат. reflexio — обращение назад) — это механизм исследования данных о программе во время её выполнения.
+Рефлексия позволяет исследовать информацию о полях, методах и конструкторах классов.
 Недостатки рефлексии:
     Худшая производительность в сравнении с классической работой с классами, методами и переменными;
     Нарушение принципа инкапсуляции.
     Ее нельзя применить при наличии ограничений безопасности. Если мы захотим использовать рефлексию на классе, который защищен с помощью специального класса SecurityManager, ничего не выйдет;
 */
 
-    public class Main {
+    public class ReflectionDemo {
     public static void main(String[] args) {
-        MyClass myClass = new MyClass();
+        Clazz obj = new Clazz();
         //Можно только получить значение number
-        int number = myClass.getNumber();
+        int number = obj.getNumber();
         System.out.println("number=" + number);
 
         //Изменить уровень доступа поля и обратиться к нему
         try {
-            Field field = myClass.getClass().getDeclaredField("name");
+            Field field = obj.getClass().getDeclaredField("name");
             /*
             1. getFields() - вернёт все публичные поля класса и всех его родителей по цепочке.
             2. getDeclaredFields() - вернёт все поля класса, не зависимо от модификатора доступа, но не вернёт поля классов-родителей.
             */
             field.setAccessible(true);
-            String name = (String) field.get(myClass);
+            String name = (String) field.get(obj);
             System.out.println("number=" + number + ", name=" + name);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
@@ -38,9 +41,9 @@ import java.lang.reflect.Method;
         //Изменить уровень доступа метода и вызвать его
         Method method = null;
         try {
-            method = myClass.getClass().getDeclaredMethod("printData");
+            method = obj.getClass().getDeclaredMethod("printData");
             method.setAccessible(true);
-            method.invoke(myClass);
+            method.invoke(obj);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -51,11 +54,11 @@ import java.lang.reflect.Method;
 
         //Изменить значение поля private
         try {
-            Field field = myClass.getClass().getDeclaredField("value");
+            Field field = obj.getClass().getDeclaredField("value");
             field.setAccessible(true);
-            //field.set(myClass, "5");
-            field.set(myClass, 5);
-            method.invoke(myClass);
+            //field.set(obj, "5");
+            field.set(obj, 5);
+            method.invoke(obj);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -65,33 +68,33 @@ import java.lang.reflect.Method;
         }
 
         //Создать экземпляр класса во время выполнения (заранее тип класса неизвестен)
-        MyClass myClass2 = null;
+        Clazz obj2 = null;
         try {
             //Класс класса (специальный класс по имени Class); есть у всех объектов Java
-            Class clazz = Class.forName(MyClass.class.getName()); //ClassLoader загрузит нужный класс по имени с помощью метода forName
+            Class clazz = Class.forName(Clazz.class.getName()); //ClassLoader загрузит нужный класс по имени с помощью метода forName
             //myClass2 = (MyClass) clazz.newInstance();
-            myClass2 = (MyClass) clazz.getDeclaredConstructor().newInstance();
+            obj2 = (Clazz) clazz.getDeclaredConstructor().newInstance();
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
         }
-        System.out.println(myClass2);
+        System.out.println(obj2);
 
         //Вызов конструктора с параметрами приведет к ошибке, поэтому нужно добавить конструктор по умолчанию
         //Вначале конструктор с параметрами закомментирован, а конструктор по умолчанию не описан
-        MyClass myClass3 = null;
+        Clazz obj3 = null;
         try {
-            Class clazz = Class.forName(MyClass.class.getName());
+            Class clazz = Class.forName(Clazz.class.getName());
             Class[] params = {int.class, String.class, int.class};
-            myClass3 = (MyClass) clazz.getConstructor(params).newInstance(1, "default2",3);
+            obj3 = (Clazz) clazz.getConstructor(params).newInstance(1, "default2",3);
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
         }
-        System.out.println(myClass3);
+        System.out.println(obj3);
 
         //Получить все конструкторы класса и параметры к ним
         Class clazz = null;
         try {
-            clazz = Class.forName(MyClass.class.getName());
+            clazz = Class.forName(Clazz.class.getName());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -106,3 +109,35 @@ import java.lang.reflect.Method;
         }
     }
 }
+
+class Clazz {
+    private int number;
+    private String name = "default";
+    private int value;
+
+    //Закомментировать
+    public Clazz(int number, String name, int value) {
+        this.number = number;
+        this.name = name;
+        this.value = value;
+    }
+
+    public Clazz(){} //Добавить позже
+
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    private void printData() {
+        System.out.println("number=" + number + ", name=" + name+ ", value="+ value);
+    }
+}
+
